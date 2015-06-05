@@ -1,9 +1,7 @@
 # Crypt
 A simple go package to encrypt/decrypt data. Uses AES + hex encoding.
 
-[![Build Status](https://travis-ci.org/WastedCode/crypter.svg?branch=master)](https://travis-ci.org/WastedCode/crypter)
-
-[![GoDoc](https://godoc.org/github.com/WastedCode/crypter?status.svg)](https://godoc.org/github.com/WastedCode/crypter)
+[![Build Status](https://travis-ci.org/WastedCode/crypter.svg?branch=master)](https://travis-ci.org/WastedCode/crypter) [![GoDoc](https://godoc.org/github.com/WastedCode/crypter?status.svg)](https://godoc.org/github.com/WastedCode/crypter)
 
 # Example Usage
 ## Encrypt
