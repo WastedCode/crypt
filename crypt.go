@@ -15,35 +15,44 @@ type Crypt struct {
     Key []byte
 }
 
+var InvalidCryptKey = errors.New("The given key is invalid")
 
 // Create a new crypt from plain text
 // To create from Bytes look at NewCryptFromUnencryptedData
-func NewCryptFromPlainText(plainText, key string) (*Crypt) {
+func NewCryptFromPlainText(plainText, key string) (*Crypt, error) {
     return NewCryptFromUnencryptedData([]byte(plainText), key)
 }
 
 // Create a new crypt from an array of bytes
-func NewCryptFromUnencryptedData(data []byte, key string) (*Crypt) {
-    ValidateCryptKey(key)
+func NewCryptFromUnencryptedData(data []byte, key string) (*Crypt, error) {
+    if (!ValidateCryptKey(key)) {
+        return nil, InvalidCryptKey
+    }
     crypt := Crypt {
         UnencryptedData: data,
         Key: []byte(key)}
-    return &crypt
+    return &crypt, nil
 }
 
 // Create a new crypt from hex encoded encrypted text
-// This will panic if the input data is not correctly encoded
-func NewCryptFromHexCipherText(cipherText, key string) (*Crypt) {
-    return NewCryptFromCipherData(DecodeHexString(cipherText), key)
+// It returns an error on failure
+func NewCryptFromHexCipherText(cipherText, key string) (*Crypt, error) {
+    decodedString, err := DecodeHexString(cipherText)
+    if (err != nil) {
+        return nil, err
+    }
+    return NewCryptFromCipherData(decodedString, key)
 }
 
 // Create a new crypt from an array of bytes that have encrypted data
-func NewCryptFromCipherData(cipherData []byte, key string) (*Crypt) {
-    ValidateCryptKey(key)
+func NewCryptFromCipherData(cipherData []byte, key string) (*Crypt, error) {
+    if (!ValidateCryptKey(key)) {
+        return nil, InvalidCryptKey
+    }
     crypt := Crypt {
         CipherData: cipherData,
         Key: []byte(key)}
-    return &crypt
+    return &crypt, nil
 }
 
 // Error is nil if the method successfully encrypts the data
@@ -104,30 +113,29 @@ func (crypt *Crypt) Decrypt() ([]byte, error) {
 func (crypt *Crypt) DecryptToString() (string, error) {
     data, err := crypt.Decrypt()
     if (err != nil) {
-        return "", nil
+        return "", err
     }
     return string(data), nil
 }
 
 // Decodes the string from hex to a byte array
-// Panics if the input string is not hex encoded
-func DecodeHexString(text string) ([]byte) {
+func DecodeHexString(text string) ([]byte, error) {
     textBytes, err := hex.DecodeString(text)
     if (err != nil) {
-        panic("The given string: " + text + " is not a valid hex string")
+        return nil, err
     }
-    return textBytes
+    return textBytes, nil
 }
 
 // The cryptographic system requires a key size of 16, 24 or 32 only
 // All other keys will be rejected
-func ValidateCryptKey(key string) {
+func ValidateCryptKey(key string) bool {
     keyLength := len(key)
     validSizes := []int {16, 24, 32}
     for _, size := range validSizes {
         if (keyLength == size) {
-            return
+            return true
         }
     }
-    panic("The given key is of invalid size")
+    return false
 }
