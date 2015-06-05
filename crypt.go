@@ -15,7 +15,7 @@ type Crypt struct {
     Key []byte
 }
 
-var InvalidCryptKey = errors.New("The given key is invalid")
+var InvalidCryptKey = errors.New("the given key is invalid")
 
 // Create a new crypt from plain text
 // To create from Bytes look at NewCryptFromUnencryptedData
@@ -96,7 +96,7 @@ func (crypt *Crypt) Decrypt() ([]byte, error) {
     }
 
     if (len(crypt.CipherData) < aes.BlockSize) {
-        return nil, errors.New("Invalid cipher text")
+        return nil, errors.New("invalid cipher text")
     }
 
     // Retrieve the cipher
