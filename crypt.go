@@ -1,3 +1,4 @@
+// Provides basic encryption and decryption of any kind of data
 package crypter
 
 import (
