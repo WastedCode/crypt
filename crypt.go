@@ -9,6 +9,8 @@ import (
     "io"
 )
 
+// Crypt stores a collection of encrypted data
+// Along with its plain text and encryption key
 type Crypt struct {
     UnencryptedData []byte
     CipherData []byte
@@ -24,7 +26,7 @@ func NewCryptFromPlainText(plainText, key string) (*Crypt, error) {
     return NewCryptFromUnencryptedData([]byte(plainText), key)
 }
 
-// Create a new crypt from an array of bytes
+// NewCryptFromUnencryptedData creates a new crypt from an array of bytes
 func NewCryptFromUnencryptedData(data []byte, key string) (*Crypt, error) {
     if (!ValidateCryptKey(key)) {
         return nil, ErrInvalidCryptKey
@@ -35,7 +37,7 @@ func NewCryptFromUnencryptedData(data []byte, key string) (*Crypt, error) {
     return &crypt, nil
 }
 
-// Create a new crypt from hex encoded encrypted text
+// NewCryptFromHexCipherText creates a new crypt from hex encoded encrypted text
 // It returns an error on failure
 func NewCryptFromHexCipherText(cipherText, key string) (*Crypt, error) {
     decodedString, err := DecodeHexString(cipherText)
@@ -45,7 +47,7 @@ func NewCryptFromHexCipherText(cipherText, key string) (*Crypt, error) {
     return NewCryptFromCipherData(decodedString, key)
 }
 
-// Create a new crypt from an array of bytes that have encrypted data
+// NewCryptFromCipherData creates a new crypt from an array of bytes that have encrypted data
 func NewCryptFromCipherData(cipherData []byte, key string) (*Crypt, error) {
     if (!ValidateCryptKey(key)) {
         return nil, ErrInvalidCryptKey
@@ -56,6 +58,7 @@ func NewCryptFromCipherData(cipherData []byte, key string) (*Crypt, error) {
     return &crypt, nil
 }
 
+// Encrypt encrypts the plain data using the given key
 // Error is nil if the method successfully encrypts the data
 func (crypt *Crypt) Encrypt() ([]byte, error) {
     block, err := aes.NewCipher(crypt.Key)
@@ -79,6 +82,7 @@ func (crypt *Crypt) Encrypt() ([]byte, error) {
     return crypt.CipherData, nil
 }
 
+// EncryptToString encrypts the data and encodes it to a hex string
 // Error is nil if the method successfully encrypts the data
 // It returns a hex encoded string for the encrypted data
 func (crypt *Crypt) EncryptToString() (string, error) {
@@ -89,6 +93,7 @@ func (crypt *Crypt) EncryptToString() (string, error) {
     return hex.EncodeToString(data), nil
 }
 
+// Decrypt tries to decrypt the given encrypted data into plain data
 // Error is nil if the decrypt was successful
 func (crypt *Crypt) Decrypt() ([]byte, error) {
     block, err := aes.NewCipher(crypt.Key)
@@ -110,6 +115,7 @@ func (crypt *Crypt) Decrypt() ([]byte, error) {
     return crypt.UnencryptedData, nil
 }
 
+// DecryptToString decrypts the data and converts it to a string
 // Tries to convert the decrypted data into a string and returns it
 func (crypt *Crypt) DecryptToString() (string, error) {
     data, err := crypt.Decrypt()
@@ -119,7 +125,7 @@ func (crypt *Crypt) DecryptToString() (string, error) {
     return string(data), nil
 }
 
-// Decodes the string from hex to a byte array
+// DecodeHexString decodes the string from hex to a byte array
 func DecodeHexString(text string) ([]byte, error) {
     textBytes, err := hex.DecodeString(text)
     if (err != nil) {
@@ -128,6 +134,7 @@ func DecodeHexString(text string) ([]byte, error) {
     return textBytes, nil
 }
 
+// ValidateCryptKey checks for the validity of the given key
 // The cryptographic system requires a key size of 16, 24 or 32 only
 // All other keys will be rejected
 func ValidateCryptKey(key string) bool {
