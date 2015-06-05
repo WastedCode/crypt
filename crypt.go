@@ -15,9 +15,10 @@ type Crypt struct {
     Key []byte
 }
 
-var InvalidCryptKey = errors.New("the given key is invalid")
+// Error when the key provided is not valid
+var ErrInvalidCryptKey = errors.New("the given key is invalid")
 
-// Create a new crypt from plain text
+// NewCryptFromPlainText creates a new crypt from plain text
 // To create from Bytes look at NewCryptFromUnencryptedData
 func NewCryptFromPlainText(plainText, key string) (*Crypt, error) {
     return NewCryptFromUnencryptedData([]byte(plainText), key)
@@ -26,7 +27,7 @@ func NewCryptFromPlainText(plainText, key string) (*Crypt, error) {
 // Create a new crypt from an array of bytes
 func NewCryptFromUnencryptedData(data []byte, key string) (*Crypt, error) {
     if (!ValidateCryptKey(key)) {
-        return nil, InvalidCryptKey
+        return nil, ErrInvalidCryptKey
     }
     crypt := Crypt {
         UnencryptedData: data,
@@ -47,7 +48,7 @@ func NewCryptFromHexCipherText(cipherText, key string) (*Crypt, error) {
 // Create a new crypt from an array of bytes that have encrypted data
 func NewCryptFromCipherData(cipherData []byte, key string) (*Crypt, error) {
     if (!ValidateCryptKey(key)) {
-        return nil, InvalidCryptKey
+        return nil, ErrInvalidCryptKey
     }
     crypt := Crypt {
         CipherData: cipherData,
