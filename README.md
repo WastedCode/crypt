@@ -9,7 +9,7 @@ A simple go package to encrypt/decrypt data. Uses AES + hex encoding.
 ```
 data := []byte("somestring")
 key := "1234567890123456" // Must be 16, 24 or 32 characters
-crypt := NewCryptFromUnencryptedData(data, key)
+crypt, err := NewCryptFromUnencryptedData(data, key)
 encrypted, err := crypt.Encrypt()
 encryptedStr, err := crypt.EncryptToString() // Returns a hex string instead of []byte
 ```
@@ -17,18 +17,18 @@ encryptedStr, err := crypt.EncryptToString() // Returns a hex string instead of 
 ```
 data := "somestring"
 key := "1234567890123456" // Must be 16, 24 or 32 characters
-crypt := NewCryptFromPlainText(data, key)
+crypt, err := NewCryptFromPlainText(data, key)
 ```
 
 ## Decrypt
 ### Byte Array
 ```
-crypt := NewCryptFromCipherData(data, key)
+crypt, err := NewCryptFromCipherData(data, key)
 decrypted, err = crypt.Decrypt()
 decryptedStr, err = crypt.DecryptToString()
 ```
 ### Hex string
 ```
-crypt := NewCryptFromHexString(dataHexString, key)
+crypt, err := NewCryptFromHexString(dataHexString, key)
 decryptedStr, err = crypt.DecryptToString()
 ```
